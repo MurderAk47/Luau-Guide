@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 2: Variables · Luau101</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0e0e14; --surface: #16161f; --surface2: #1e1e2a; --border: #2a2a3a;
+    --accent: #7c6ff7; --accent2: #4ecdc4; --accent3: #ff6b6b; --yellow: #ffd93d;
+    --text: #e8e8f0; --muted: #888899; --green: #6bcb77;
+    --mono: 'JetBrains Mono', monospace; --sans: 'Space Grotesk', sans-serif;
+  }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(14,14,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { font-size: 1.1rem; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; text-decoration: none; }
+  .nav-logo span { color: var(--accent2); }
+  .nav-links { display: flex; gap: 0.25rem; }
+  .nav-links a { color: var(--muted); font-size: 0.8rem; font-weight: 500; text-decoration: none; padding: 6px 12px; border-radius: 6px; transition: all 0.15s; }
+  .nav-links a:hover { color: var(--text); background: var(--surface2); }
+  .page { max-width: 800px; margin: 0 auto; padding: 90px 2rem 4rem; }
+  .chapter-tag { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent2); margin-bottom: 1rem; display: block; }
+  h1.page-title { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1rem; }
+  .page-intro { font-size: 1.05rem; color: var(--muted); line-height: 1.7; margin-bottom: 3rem; border-bottom: 1px solid var(--border); padding-bottom: 2rem; }
+  .page-intro strong { color: var(--text); }
+  .learn-section { margin-bottom: 3rem; }
+  .learn-section h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 10px; }
+  .learn-section p { color: var(--muted); line-height: 1.75; margin-bottom: 1rem; font-size: 0.95rem; }
+  .learn-section p strong { color: var(--text); }
+  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 1rem 0; }
+  .code-header { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .code-header span { font-size: 0.7rem; color: var(--muted); font-family: var(--mono); }
+  .code-dots { display: flex; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
+  .code-body { padding: 1.25rem 1.5rem; font-family: var(--mono); font-size: 0.85rem; line-height: 2; overflow-x: auto; white-space: pre; }
+  .c { color: #555566; } .kw { color: #b39ddb; font-weight: 600; } .str { color: var(--accent2); }
+  .fn { color: var(--yellow); } .num { color: #ff8a80; }
+  .callout { border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: 0.9rem; line-height: 1.65; display: flex; gap: 12px; align-items: flex-start; }
+  .callout-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .callout-body { flex: 1; }
+  .callout-body strong { display: block; margin-bottom: 3px; }
+  .tip-box { background: rgba(124,111,247,0.1); border: 1px solid rgba(124,111,247,0.25); color: #c0b8ff; }
+  .ok-box { background: rgba(107,203,119,0.08); border: 1px solid rgba(107,203,119,0.2); color: #a5d6a7; }
+  .activity { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; margin: 2.5rem 0; }
+  .activity-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+  .activity h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .activity p { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.25rem; line-height: 1.6; }
+  .opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+  .opt-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; color: var(--text); font-family: var(--sans); font-size: 0.9rem; text-align: left; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 10px; }
+  .opt-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .opt-btn:disabled { cursor: default; opacity: 0.7; }
+  .opt-btn.correct { background: rgba(107,203,119,0.12); border-color: var(--green); color: var(--green); }
+  .opt-btn.wrong { background: rgba(255,107,107,0.1); border-color: var(--accent3); color: var(--accent3); }
+  .opt-letter { width: 24px; height: 24px; border-radius: 6px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; font-family: var(--mono); }
+  .opt-btn.correct .opt-letter { background: var(--green); color: #000; }
+  .opt-btn.wrong .opt-letter { background: var(--accent3); color: #fff; }
+  .quiz-result { font-size: 0.9rem; padding: 10px 14px; border-radius: 8px; margin-top: 0.5rem; display: none; font-weight: 500; }
+  .quiz-result.show { display: block; }
+  .quiz-result.pass { background: rgba(107,203,119,0.12); color: var(--green); border: 1px solid rgba(107,203,119,0.25); }
+  .quiz-result.fail { background: rgba(255,107,107,0.1); color: var(--accent3); border: 1px solid rgba(255,107,107,0.2); }
+  .blank-input { background: var(--surface2); border: 1px solid var(--accent); border-radius: 6px; padding: 6px 10px; color: var(--text); font-family: var(--mono); font-size: 0.9rem; outline: none; }
+  .blank-input.correct { border-color: var(--green); background: rgba(107,203,119,0.1); color: var(--green); }
+  .blank-input.wrong { border-color: var(--accent3); background: rgba(255,107,107,0.08); color: var(--accent3); }
+  .check-btn { background: var(--accent); color: #fff; font-family: var(--sans); font-weight: 600; font-size: 0.85rem; padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.15s; }
+  .check-btn:hover { background: #6a5ee0; }
+  .page-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+  .nav-btn { display: inline-flex; align-items: center; gap: 6px; font-family: var(--sans); font-weight: 500; font-size: 0.9rem; padding: 10px 20px; border-radius: 8px; text-decoration: none; transition: all 0.15s; border: 1px solid var(--border); color: var(--muted); background: transparent; cursor: pointer; }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn.next { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .nav-btn.next:hover { background: #6a5ee0; }
+  .progress-bar { display: flex; gap: 4px; }
+  .prog { width: 28px; height: 4px; border-radius: 2px; background: var(--border); }
+  .prog.done { background: var(--accent); }
+  .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 1rem 0; }
+  .type-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+  .type-name { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+  .type-ex { font-family: var(--mono); font-size: 0.85rem; margin-bottom: 4px; }
+  .type-desc { font-size: 0.8rem; color: var(--muted); }
+  .t-string .type-name { color: var(--accent2); } .t-number .type-name { color: var(--yellow); }
+  .t-bool .type-name { color: var(--accent); } .t-nil .type-name { color: var(--muted); }
+  footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 4rem; }
+  @media (max-width: 600px) { .nav-links { display: none; } .type-grid { grid-template-columns: 1fr; } .page-nav { flex-direction: column; gap: 1rem; } }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">Luau<span>101</span></a>
+  <div class="nav-links"><a href="index.html">Home</a><a href="01-intro.html">Chapters</a></div>
+</nav>
+<div class="page">
+  <span class="chapter-tag">Chapter 02 · Beginner</span>
+  <h1 class="page-title">Variables 📦</h1>
+  <p class="page-intro">A variable is like a <strong>labeled box</strong>. You put something inside it, give it a name, and later you can open that box and use whatever's in it. Variables are how your script <strong>remembers information</strong> — like a player's name, their score, or whether they're alive.</p>
+
+  <div class="learn-section">
+    <h2><span>📝</span> Creating a variable</h2>
+    <p>You always start with the word <strong>local</strong>, then the name you want, then <strong>=</strong> and the value.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>variables.lua</span></div>
+      <div class="code-body"><span class="kw">local</span> playerName = <span class="str">"Zack"</span>    <span class="c">-- a name (text)</span>
+<span class="kw">local</span> score = <span class="num">0</span>             <span class="c">-- a number</span>
+<span class="kw">local</span> isAlive = <span class="kw">true</span>        <span class="c">-- true or false</span>
+
+<span class="fn">print</span>(playerName)  <span class="c">-- Zack</span>
+<span class="fn">print</span>(score)       <span class="c">-- 0</span>
+<span class="fn">print</span>(isAlive)     <span class="c">-- true</span></div>
+    </div>
+    <div class="callout tip-box"><span class="callout-icon">💡</span><div class="callout-body"><strong>Always use local!</strong> Writing local before a variable keeps it organized and scoped. It's the correct way in Luau — get into the habit now.</div></div>
+  </div>
+
+  <div class="learn-section">
+    <h2><span>🔢</span> The 4 types of values</h2>
+    <p>Every variable holds one of these types of data:</p>
+    <div class="type-grid">
+      <div class="type-card t-string"><div class="type-name">String — text</div><div class="type-ex"><span class="str">"Hello"</span> or <span class="str">'Hello'</span></div><div class="type-desc">Always wrapped in quotes</div></div>
+      <div class="type-card t-number"><div class="type-name">Number</div><div class="type-ex"><span class="num">42</span> or <span class="num">3.14</span></div><div class="type-desc">No quotes — just the number</div></div>
+      <div class="type-card t-bool"><div class="type-name">Boolean — yes/no</div><div class="type-ex"><span class="kw">true</span> or <span class="kw">false</span></div><div class="type-desc">Only ever one of two values</div></div>
+      <div class="type-card t-nil"><div class="type-name">Nil — nothing</div><div class="type-ex"><span class="kw">nil</span></div><div class="type-desc">Means "this doesn't exist"</div></div>
+    </div>
+  </div>
+
+  <div class="learn-section">
+    <h2><span>🔄</span> Updating a variable</h2>
+    <p>Once a variable exists, you can change what's inside it — just don't write <strong>local</strong> again:</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>update.lua</span></div>
+      <div class="code-body"><span class="kw">local</span> score = <span class="num">0</span>
+<span class="fn">print</span>(score)           <span class="c">-- 0</span>
+
+score = score + <span class="num">10</span>     <span class="c">-- add 10</span>
+<span class="fn">print</span>(score)           <span class="c">-- 10</span>
+
+score = score + <span class="num">5</span>      <span class="c">-- add 5 more</span>
+<span class="fn">print</span>(score)           <span class="c">-- 15</span></div>
+    </div>
+    <div class="callout ok-box"><span class="callout-icon">✅</span><div class="callout-body">After you create a variable with local, just use its name to update it. Don't write local again or you'll accidentally create a second variable!</div></div>
+  </div>
+
+  <div class="learn-section">
+    <h2><span>🔗</span> Combining text with ..</h2>
+    <p>Two dots <strong>..</strong> glue text together. This is called <strong>concatenation</strong>.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>concat.lua</span></div>
+      <div class="code-body"><span class="kw">local</span> name = <span class="str">"Zack"</span>
+<span class="kw">local</span> score = <span class="num">99</span>
+<span class="fn">print</span>(<span class="str">"Player: "</span> .. name)            <span class="c">-- Player: Zack</span>
+<span class="fn">print</span>(<span class="str">"Score: "</span> .. score)           <span class="c">-- Score: 99</span>
+<span class="fn">print</span>(name .. <span class="str">" got "</span> .. score)  <span class="c">-- Zack got 99</span></div>
+    </div>
+  </div>
+
+  <div class="activity">
+    <div class="activity-label">🎯 Quick Check</div>
+    <h3>Which is the correct way to create a variable?</h3>
+    <p>Pick the right syntax:</p>
+    <div class="opts" id="q1-opts">
+      <button class="opt-btn" onclick="answer('q1',this,false)"><span class="opt-letter">A</span> var name = "Zack"</button>
+      <button class="opt-btn" onclick="answer('q1',this,true)"><span class="opt-letter">B</span> local name = "Zack"</button>
+      <button class="opt-btn" onclick="answer('q1',this,false)"><span class="opt-letter">C</span> let name = "Zack"</button>
+      <button class="opt-btn" onclick="answer('q1',this,false)"><span class="opt-letter">D</span> name := "Zack"</button>
+    </div>
+    <div class="quiz-result" id="q1-result"></div>
+  </div>
+
+  <div class="activity">
+    <div class="activity-label">✏️ Fill in the blank</div>
+    <h3>What value type is this?</h3>
+    <p>For each example, type: string, number, boolean, or nil</p>
+    <div id="type-checks"></div>
+    <button class="check-btn" onclick="checkTypes()" style="margin-top:12px;">Check answers</button>
+    <div class="quiz-result" id="type-result"></div>
+  </div>
+
+  <div class="activity">
+    <div class="activity-label">🧮 Math challenge</div>
+    <h3>What does score equal at the end?</h3>
+    <p>Read the code carefully and figure out the final value of score:</p>
+    <div class="code-block" style="margin-bottom:1rem;">
+      <div class="code-body"><span class="kw">local</span> score = <span class="num">10</span>
+score = score + <span class="num">5</span>
+score = score * <span class="num">2</span>
+score = score - <span class="num">3</span></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <span style="color:var(--muted);font-size:0.9rem;">score =</span>
+      <input class="blank-input" id="math-ans" placeholder="?" maxlength="4" style="width:80px;" type="number"/>
+      <button class="check-btn" onclick="checkMath()">Check</button>
+    </div>
+    <div class="quiz-result" id="math-result"></div>
+  </div>
+
+  <div class="page-nav">
+    <a href="01-intro.html" class="nav-btn">← Chapter 1</a>
+    <div class="progress-bar"><div class="prog done"></div><div class="prog done"></div><div class="prog"></div><div class="prog"></div><div class="prog"></div><div class="prog"></div><div class="prog"></div><div class="prog"></div></div>
+    <a href="03-ifelse.html" class="nav-btn next">Next: If / Else →</a>
+  </div>
+</div>
+<footer>Made with ❤️ for Zack · Luau101 · Happy scripting!</footer>
+<script>
+function answer(id, btn, correct) {
+  const opts = document.getElementById(id+'-opts');
+  const res = document.getElementById(id+'-result');
+  opts.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) opts.querySelectorAll('.opt-btn').forEach(b => { if (b.getAttribute('onclick').includes('true')) b.classList.add('correct'); });
+  res.textContent = correct ? '✅ Correct! local is the proper keyword to declare variables in Luau.' : '❌ Nope! In Luau you always use local to create a variable.';
+  res.className = 'quiz-result show ' + (correct ? 'pass' : 'fail');
+}
+const typeExamples = [{ val: '"Hello"', answer: 'string' }, { val: 'true', answer: 'boolean' }, { val: '42', answer: 'number' }, { val: 'nil', answer: 'nil' }];
+const tc = document.getElementById('type-checks');
+typeExamples.forEach((ex, i) => {
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;';
+  div.innerHTML = `<code style="font-family:var(--mono);font-size:0.9rem;color:var(--accent2);background:var(--surface2);padding:4px 10px;border-radius:6px;">${ex.val}</code><span style="color:var(--muted);font-size:0.85rem;">is a</span><input class="blank-input type-inp" data-answer="${ex.answer}" placeholder="type?" style="width:110px;" id="type-${i}"/>`;
+  tc.appendChild(div);
+});
+function checkTypes() {
+  let correct = 0;
+  document.querySelectorAll('.type-inp').forEach(inp => {
+    const val = inp.value.trim().toLowerCase();
+    inp.classList.remove('correct','wrong');
+    if (val === inp.dataset.answer) { inp.classList.add('correct'); correct++; } else { inp.classList.add('wrong'); inp.placeholder = inp.dataset.answer; }
+  });
+  const res = document.getElementById('type-result');
+  res.textContent = correct === 4 ? '✅ Perfect! All 4 correct!' : correct + '/4 correct — check the red ones and try again!';
+  res.className = 'quiz-result show ' + (correct === 4 ? 'pass' : 'fail');
+}
+function checkMath() {
+  const val = parseInt(document.getElementById('math-ans').value);
+  const inp = document.getElementById('math-ans');
+  const res = document.getElementById('math-result');
+  if (val === 27) { inp.classList.add('correct'); inp.classList.remove('wrong'); res.textContent = '✅ Correct! 10+5=15, 15×2=30, 30-3=27.'; res.className = 'quiz-result show pass'; }
+  else { inp.classList.add('wrong'); inp.classList.remove('correct'); res.textContent = '❌ Not quite. Work through it step by step: 10+5 first, then ×2, then -3.'; res.className = 'quiz-result show fail'; }
+}
+</script>
+</body>
+</html>

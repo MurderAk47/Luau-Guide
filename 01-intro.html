@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 1: What is Luau? · Luau101</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0e0e14; --surface: #16161f; --surface2: #1e1e2a; --border: #2a2a3a;
+    --accent: #7c6ff7; --accent2: #4ecdc4; --accent3: #ff6b6b; --yellow: #ffd93d;
+    --text: #e8e8f0; --muted: #888899; --green: #6bcb77;
+    --mono: 'JetBrains Mono', monospace; --sans: 'Space Grotesk', sans-serif;
+  }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(14,14,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { font-size: 1.1rem; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; text-decoration: none; }
+  .nav-logo span { color: var(--accent2); }
+  .nav-links { display: flex; gap: 0.25rem; }
+  .nav-links a { color: var(--muted); font-size: 0.8rem; font-weight: 500; text-decoration: none; padding: 6px 12px; border-radius: 6px; transition: all 0.15s; }
+  .nav-links a:hover { color: var(--text); background: var(--surface2); }
+  .page { max-width: 800px; margin: 0 auto; padding: 90px 2rem 4rem; }
+  .chapter-tag { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent2); margin-bottom: 1rem; display: block; }
+  h1.page-title { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1rem; }
+  .page-intro { font-size: 1.05rem; color: var(--muted); line-height: 1.7; margin-bottom: 3rem; border-bottom: 1px solid var(--border); padding-bottom: 2rem; }
+  .page-intro strong { color: var(--text); }
+  .learn-section { margin-bottom: 3rem; }
+  .learn-section h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 10px; }
+  .learn-section p { color: var(--muted); line-height: 1.75; margin-bottom: 1rem; font-size: 0.95rem; }
+  .learn-section p strong { color: var(--text); }
+  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 1rem 0; }
+  .code-header { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .code-header span { font-size: 0.7rem; color: var(--muted); font-family: var(--mono); }
+  .code-dots { display: flex; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
+  .code-body { padding: 1.25rem 1.5rem; font-family: var(--mono); font-size: 0.85rem; line-height: 2; overflow-x: auto; white-space: pre; }
+  .c { color: #555566; } .kw { color: #b39ddb; font-weight: 600; } .str { color: var(--accent2); }
+  .fn { color: var(--yellow); } .num { color: #ff8a80; } .prop { color: #80cbc4; }
+  .callout { border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: 0.9rem; line-height: 1.65; display: flex; gap: 12px; align-items: flex-start; }
+  .callout-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .callout-body { flex: 1; }
+  .callout-body strong { display: block; margin-bottom: 3px; }
+  .tip-box { background: rgba(124,111,247,0.1); border: 1px solid rgba(124,111,247,0.25); color: #c0b8ff; }
+  .warn-box { background: rgba(255,217,61,0.08); border: 1px solid rgba(255,217,61,0.2); color: #ffe082; }
+  .ok-box { background: rgba(107,203,119,0.08); border: 1px solid rgba(107,203,119,0.2); color: #a5d6a7; }
+  .err-box { background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.2); color: #ef9a9a; }
+  .activity { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; margin: 2.5rem 0; }
+  .activity-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+  .activity h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .activity p { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.25rem; line-height: 1.6; }
+  .opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+  .opt-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; color: var(--text); font-family: var(--sans); font-size: 0.9rem; text-align: left; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 10px; }
+  .opt-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .opt-btn:disabled { cursor: default; opacity: 0.7; }
+  .opt-btn.correct { background: rgba(107,203,119,0.12); border-color: var(--green); color: var(--green); }
+  .opt-btn.wrong { background: rgba(255,107,107,0.1); border-color: var(--accent3); color: var(--accent3); }
+  .opt-letter { width: 24px; height: 24px; border-radius: 6px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; font-family: var(--mono); }
+  .opt-btn.correct .opt-letter { background: var(--green); color: #000; }
+  .opt-btn.wrong .opt-letter { background: var(--accent3); color: #fff; }
+  .quiz-result { font-size: 0.9rem; padding: 10px 14px; border-radius: 8px; margin-top: 0.5rem; display: none; font-weight: 500; }
+  .quiz-result.show { display: block; }
+  .quiz-result.pass { background: rgba(107,203,119,0.12); color: var(--green); border: 1px solid rgba(107,203,119,0.25); }
+  .quiz-result.fail { background: rgba(255,107,107,0.1); color: var(--accent3); border: 1px solid rgba(255,107,107,0.2); }
+  .blank-input { background: var(--surface2); border: 1px solid var(--accent); border-radius: 6px; padding: 6px 10px; color: var(--text); font-family: var(--mono); font-size: 0.9rem; outline: none; }
+  .blank-input:focus { border-color: var(--accent2); }
+  .blank-input.correct { border-color: var(--green); background: rgba(107,203,119,0.1); color: var(--green); }
+  .blank-input.wrong { border-color: var(--accent3); background: rgba(255,107,107,0.08); color: var(--accent3); }
+  .check-btn { background: var(--accent); color: #fff; font-family: var(--sans); font-weight: 600; font-size: 0.85rem; padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.15s; }
+  .check-btn:hover { background: #6a5ee0; }
+  .page-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+  .nav-btn { display: inline-flex; align-items: center; gap: 6px; font-family: var(--sans); font-weight: 500; font-size: 0.9rem; padding: 10px 20px; border-radius: 8px; text-decoration: none; transition: all 0.15s; border: 1px solid var(--border); color: var(--muted); background: transparent; cursor: pointer; }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn.next { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .nav-btn.next:hover { background: #6a5ee0; }
+  .progress-bar { display: flex; gap: 4px; }
+  .prog { width: 28px; height: 4px; border-radius: 2px; background: var(--border); }
+  .prog.done { background: var(--accent); }
+  .script-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 1rem 0; }
+  .script-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+  .script-card .s-icon { font-size: 1.5rem; margin-bottom: 8px; }
+  .script-card .s-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
+  .script-card .s-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+  footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 4rem; }
+  @media (max-width: 600px) { .nav-links { display: none; } .script-grid { grid-template-columns: 1fr; } .page-nav { flex-direction: column; gap: 1rem; } }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">Luau<span>101</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="01-intro.html">Chapters</a>
+  </div>
+</nav>
+<div class="page">
+  <span class="chapter-tag">Chapter 01 · Beginner</span>
+  <h1 class="page-title">What is Luau? 🎮</h1>
+  <p class="page-intro">Luau is the <strong>programming language</strong> Roblox uses to make games do stuff. Doors that open, swords that deal damage, leaderboards — all of it is written in Luau. It's based on a language called <strong>Lua</strong>, but Roblox added extra features on top. Learn Luau and you basically learn Lua too.</p>
+
+  <div class="learn-section">
+    <h2><span class="icon">💬</span> Your first line of code</h2>
+    <p>The very first thing everyone writes is a <strong>print()</strong> statement. It sends a message to the Output window inside Roblox Studio. Think of it like a sticky note from your script.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>script.lua</span></div>
+      <div class="code-body"><span class="c">-- This is a comment. Luau ignores it completely.</span>
+<span class="c">-- Use comments to leave notes for yourself!</span>
+
+<span class="fn">print</span>(<span class="str">"Hello Zack! Your script works!"</span>)</div>
+    </div>
+    <div class="callout tip-box">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body"><strong>Comments</strong> start with two dashes --. Everything after them on that line is ignored by Luau. Use them to explain your code!</div>
+    </div>
+  </div>
+
+  <div class="learn-section">
+    <h2><span class="icon">📁</span> Where do you write scripts?</h2>
+    <p>In Roblox Studio, scripts live <strong>inside objects</strong> in your game. There are 3 types you'll use:</p>
+    <div class="script-grid">
+      <div class="script-card"><div class="s-icon">📜</div><div class="s-name">Script</div><div class="s-desc">Runs on the <strong>server</strong>. Everyone in the game sees the effects. Use for most game logic.</div></div>
+      <div class="script-card"><div class="s-icon">💻</div><div class="s-name">LocalScript</div><div class="s-desc">Runs on <strong>one player's screen only</strong>. Use for GUIs, camera, and player input.</div></div>
+      <div class="script-card"><div class="s-icon">🧩</div><div class="s-name">ModuleScript</div><div class="s-desc">A <strong>reusable toolbox</strong>. Holds shared code that other scripts can load and use.</div></div>
+    </div>
+    <div class="callout warn-box">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-body"><strong>Classic beginner mistake:</strong> Putting a LocalScript where a regular Script should go. Your code will run but nothing visible will happen — super confusing. When in doubt, start with a Script.</div>
+    </div>
+  </div>
+
+  <div class="activity">
+    <div class="activity-label">🎯 Quick Check</div>
+    <h3>What does print() do?</h3>
+    <p>Pick the best answer:</p>
+    <div class="opts" id="q1-opts">
+      <button class="opt-btn" onclick="answer('q1',this,false)"><span class="opt-letter">A</span> It prints your script to paper</button>
+      <button class="opt-btn" onclick="answer('q1',this,false)"><span class="opt-letter">B</span> It deletes your code</button>
+      <button class="opt-btn" onclick="answer('q1',this,true)"><span class="opt-letter">C</span> It sends a message to the Output window</button>
+      <button class="opt-btn" onclick="answer('q1',this,false)"><span class="opt-letter">D</span> It makes the player jump</button>
+    </div>
+    <div class="quiz-result" id="q1-result"></div>
+  </div>
+
+  <div class="activity">
+    <div class="activity-label">✏️ Fill in the blank</div>
+    <h3>Complete the comment syntax</h3>
+    <p>In Luau, a comment starts with what two characters?</p>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span style="font-family:var(--mono);color:var(--muted);">Type the characters:</span>
+      <input class="blank-input" id="comment-ans" placeholder="??" maxlength="3" style="width:70px;" />
+      <button class="check-btn" onclick="checkComment()">Check</button>
+    </div>
+    <div class="quiz-result" id="comment-result"></div>
+  </div>
+
+  <div class="activity">
+    <div class="activity-label">🔗 Match the script type</div>
+    <h3>Which script would you use?</h3>
+    <p>Click the correct script type for each situation:</p>
+    <div id="match-container"></div>
+  </div>
+
+  <div class="page-nav">
+    <a href="index.html" class="nav-btn">← Home</a>
+    <div class="progress-bar"><div class="prog done"></div><div class="prog"></div><div class="prog"></div><div class="prog"></div><div class="prog"></div><div class="prog"></div><div class="prog"></div><div class="prog"></div></div>
+    <a href="02-variables.html" class="nav-btn next">Next: Variables →</a>
+  </div>
+</div>
+<footer>Made with ❤️ for Zack · Luau101 · Happy scripting!</footer>
+<script>
+function answer(id, btn, correct) {
+  const opts = document.getElementById(id+'-opts');
+  const res = document.getElementById(id+'-result');
+  opts.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) opts.querySelectorAll('.opt-btn').forEach(b => { if (b.getAttribute('onclick').includes('true')) b.classList.add('correct'); });
+  res.textContent = correct ? '✅ Correct! print() sends messages to the Output window so you can see what your script is doing.' : '❌ Not quite — print() sends a message to the Output window in Roblox Studio.';
+  res.className = 'quiz-result show ' + (correct ? 'pass' : 'fail');
+}
+function checkComment() {
+  const val = document.getElementById('comment-ans').value.trim();
+  const input = document.getElementById('comment-ans');
+  const res = document.getElementById('comment-result');
+  if (val === '--') { input.classList.add('correct'); res.textContent = '✅ Yes! -- (two dashes) starts a comment in Luau.'; res.className = 'quiz-result show pass'; }
+  else { input.classList.add('wrong'); res.textContent = "❌ Not quite. Hint: it's two of the same character used in subtraction."; res.className = 'quiz-result show fail'; }
+}
+const matchQs = [
+  { q: 'Make a health bar GUI for the player', answer: 'LocalScript' },
+  { q: 'Spawn enemies every 30 seconds for everyone', answer: 'Script' },
+  { q: 'Share a list of weapons between multiple scripts', answer: 'ModuleScript' },
+];
+const mc = document.getElementById('match-container');
+matchQs.forEach((item, i) => {
+  const div = document.createElement('div');
+  div.style.cssText = 'margin-bottom:14px;';
+  div.innerHTML = `<div style="font-size:0.85rem;color:var(--muted);margin-bottom:6px;">${item.q}</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    ${['Script','LocalScript','ModuleScript'].map(s => `<button class="opt-btn" style="padding:8px 14px;" onclick="matchAns(this,'${s}','${item.answer}',${i})"><span class="opt-letter" style="font-size:0.65rem;">${s[0]}</span>${s}</button>`).join('')}
+  </div><div class="quiz-result" id="match-res-${i}"></div>`;
+  mc.appendChild(div);
+});
+function matchAns(btn, chosen, correct, i) {
+  btn.parentElement.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  btn.classList.add(chosen === correct ? 'correct' : 'wrong');
+  if (chosen !== correct) btn.parentElement.querySelectorAll('.opt-btn').forEach(b => { if (b.textContent.trim().startsWith(correct)) b.classList.add('correct'); });
+  const res = document.getElementById('match-res-'+i);
+  res.textContent = chosen === correct ? `✅ Correct! ${correct} is the right choice.` : `❌ Nope! The correct answer is ${correct}.`;
+  res.className = 'quiz-result show ' + (chosen === correct ? 'pass' : 'fail');
+}
+</script>
+</body>
+</html>

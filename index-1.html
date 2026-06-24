@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luau for Beginners 🎮</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0e0e14;
+    --surface: #16161f;
+    --surface2: #1e1e2a;
+    --border: #2a2a3a;
+    --accent: #7c6ff7;
+    --accent2: #4ecdc4;
+    --accent3: #ff6b6b;
+    --yellow: #ffd93d;
+    --text: #e8e8f0;
+    --muted: #888899;
+    --green: #6bcb77;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(14,14,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { font-size: 1.1rem; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; text-decoration: none; }
+  .nav-logo span { color: var(--accent2); }
+  .nav-links { display: flex; gap: 0.25rem; }
+  .nav-links a { color: var(--muted); font-size: 0.8rem; font-weight: 500; text-decoration: none; padding: 6px 12px; border-radius: 6px; transition: all 0.15s; }
+  .nav-links a:hover { color: var(--text); background: var(--surface2); }
+
+  /* HERO */
+  .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 6rem 2rem 4rem; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,111,247,0.15) 0%, transparent 70%); pointer-events: none; }
+  .hero-eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent2); margin-bottom: 1.5rem; }
+  .hero h1 { font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
+  .hero h1 .highlight { color: var(--accent); }
+  .hero h1 .hi2 { color: var(--accent2); }
+  .hero-sub { font-size: 1.1rem; color: var(--muted); max-width: 500px; line-height: 1.7; margin-bottom: 3rem; }
+  .hero-sub strong { color: var(--text); }
+
+  /* CODE PREVIEW */
+  .code-preview { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; font-family: var(--mono); font-size: 0.85rem; line-height: 1.9; text-align: left; max-width: 480px; width: 100%; margin-bottom: 3rem; position: relative; }
+  .code-preview::before { content: '● ● ●'; position: absolute; top: 10px; left: 14px; font-size: 0.6rem; color: #444; letter-spacing: 4px; }
+  .code-preview .lines { margin-top: 1rem; }
+  .c { color: var(--muted); } .kw { color: var(--accent); } .str { color: var(--accent2); } .fn { color: var(--yellow); } .num { color: var(--accent3); }
+
+  /* CTA */
+  .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; font-family: var(--sans); font-weight: 600; font-size: 1rem; padding: 14px 32px; border-radius: 10px; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s; }
+  .btn-primary:hover { background: #6a5ee0; transform: translateY(-1px); }
+  .btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--muted); font-family: var(--sans); font-weight: 500; font-size: 0.95rem; padding: 14px 24px; border-radius: 10px; text-decoration: none; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; margin-left: 12px; }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* CHAPTERS GRID */
+  .chapters { padding: 5rem 2rem; max-width: 960px; margin: 0 auto; }
+  .section-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+  .section-title { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 3rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+  .chapter-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; text-decoration: none; color: inherit; display: block; transition: all 0.2s; position: relative; overflow: hidden; }
+  .chapter-card:hover { border-color: var(--accent); transform: translateY(-2px); background: var(--surface2); }
+  .chapter-card::after { content: '→'; position: absolute; top: 1.5rem; right: 1.5rem; color: var(--muted); font-size: 1.1rem; transition: all 0.2s; }
+  .chapter-card:hover::after { color: var(--accent); transform: translateX(3px); }
+  .card-num { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); margin-bottom: 0.75rem; }
+  .card-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+  .card-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .card-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+  .card-badge { display: inline-block; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 8px; border-radius: 4px; margin-top: 1rem; }
+  .easy { background: rgba(107,203,119,0.15); color: var(--green); }
+  .med { background: rgba(255,217,61,0.15); color: var(--yellow); }
+  .hard { background: rgba(255,107,107,0.15); color: var(--accent3); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; }
+
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    .btn-secondary { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Luau<span>101</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="01-intro.html">Chapters</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">Roblox Scripting · Made Simple</div>
+  <h1>Learn <span class="highlight">Luau</span><br>the <span class="hi2">easy</span> way</h1>
+  <p class="hero-sub">Hey <strong>Zack</strong>! 👋 This is your step-by-step guide to scripting in Roblox. No fluff, no confusing jargon — just clear explanations, real examples, and mini quizzes.</p>
+  <div class="code-preview">
+    <div class="lines">
+      <div><span class="c">-- Your first Luau script!</span></div>
+      <div><span class="kw">local</span> playerName = <span class="str">"Zack"</span></div>
+      <div><span class="fn">print</span>(<span class="str">"Hello, "</span> .. playerName .. <span class="str">"!"</span>)</div>
+      <div><span class="c">-- Output: Hello, Zack!</span></div>
+    </div>
+  </div>
+  <div>
+    <a href="01-intro.html" class="btn-primary">Start Learning →</a>
+    <a href="#chapters" class="btn-secondary">See all chapters</a>
+  </div>
+</section>
+
+<section class="chapters" id="chapters">
+  <div class="section-label">Curriculum</div>
+  <div class="section-title">8 chapters, zero boredom</div>
+  <div class="grid">
+    <a href="01-intro.html" class="chapter-card">
+      <div class="card-num">Chapter 01</div>
+      <div class="card-icon">🎮</div>
+      <div class="card-title">What is Luau?</div>
+      <div class="card-desc">What Luau is, where to write scripts, and your very first print() statement.</div>
+      <span class="card-badge easy">Beginner</span>
+    </a>
+    <a href="02-variables.html" class="chapter-card">
+      <div class="card-num">Chapter 02</div>
+      <div class="card-icon">📦</div>
+      <div class="card-title">Variables</div>
+      <div class="card-desc">Store names, numbers, and booleans in labeled boxes called variables.</div>
+      <span class="card-badge easy">Beginner</span>
+    </a>
+    <a href="03-ifelse.html" class="chapter-card">
+      <div class="card-num">Chapter 03</div>
+      <div class="card-icon">🤔</div>
+      <div class="card-title">If / Else</div>
+      <div class="card-desc">Make your code decide what to do based on conditions.</div>
+      <span class="card-badge easy">Beginner</span>
+    </a>
+    <a href="04-loops.html" class="chapter-card">
+      <div class="card-num">Chapter 04</div>
+      <div class="card-icon">🔄</div>
+      <div class="card-title">Loops</div>
+      <div class="card-desc">Repeat code without copy-pasting it a hundred times.</div>
+      <span class="card-badge med">Intermediate</span>
+    </a>
+    <a href="05-functions.html" class="chapter-card">
+      <div class="card-num">Chapter 05</div>
+      <div class="card-icon">🛠️</div>
+      <div class="card-title">Functions</div>
+      <div class="card-desc">Write code once, use it anywhere. The backbone of every good script.</div>
+      <span class="card-badge med">Intermediate</span>
+    </a>
+    <a href="06-tables.html" class="chapter-card">
+      <div class="card-num">Chapter 06</div>
+      <div class="card-icon">📋</div>
+      <div class="card-title">Tables</div>
+      <div class="card-desc">Store lists and collections of data like a pro.</div>
+      <span class="card-badge med">Intermediate</span>
+    </a>
+    <a href="07-events.html" class="chapter-card">
+      <div class="card-num">Chapter 07</div>
+      <div class="card-icon">⚡</div>
+      <div class="card-title">Events</div>
+      <div class="card-desc">React to things that happen in the game — touches, clicks, joins.</div>
+      <span class="card-badge hard">Important</span>
+    </a>
+    <a href="08-quiz.html" class="chapter-card">
+      <div class="card-num">Chapter 08</div>
+      <div class="card-icon">🧠</div>
+      <div class="card-title">Final Quiz</div>
+      <div class="card-desc">Test everything you've learned. Can you score 100%?</div>
+      <span class="card-badge hard">Challenge</span>
+    </a>
+  </div>
+</section>
+
+<footer>Made with ❤️ for Zack · Luau101 · Happy scripting!</footer>
+
+</body>
+</html>

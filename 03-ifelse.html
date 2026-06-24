@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 3: If / Else · Luau101</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --bg: #0e0e14; --surface: #16161f; --surface2: #1e1e2a; --border: #2a2a3a; --accent: #7c6ff7; --accent2: #4ecdc4; --accent3: #ff6b6b; --yellow: #ffd93d; --text: #e8e8f0; --muted: #888899; --green: #6bcb77; --mono: 'JetBrains Mono', monospace; --sans: 'Space Grotesk', sans-serif; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(14,14,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { font-size: 1.1rem; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; text-decoration: none; }
+  .nav-logo span { color: var(--accent2); }
+  .nav-links { display: flex; gap: 0.25rem; }
+  .nav-links a { color: var(--muted); font-size: 0.8rem; font-weight: 500; text-decoration: none; padding: 6px 12px; border-radius: 6px; transition: all 0.15s; }
+  .nav-links a:hover { color: var(--text); background: var(--surface2); }
+  .page { max-width: 800px; margin: 0 auto; padding: 90px 2rem 4rem; }
+  .chapter-tag { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent2); margin-bottom: 1rem; display: block; }
+  h1.page-title { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1rem; }
+  .page-intro { font-size: 1.05rem; color: var(--muted); line-height: 1.7; margin-bottom: 3rem; border-bottom: 1px solid var(--border); padding-bottom: 2rem; }
+  .page-intro strong { color: var(--text); }
+  .learn-section { margin-bottom: 3rem; }
+  .learn-section h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 10px; }
+  .learn-section p { color: var(--muted); line-height: 1.75; margin-bottom: 1rem; font-size: 0.95rem; }
+  .learn-section p strong { color: var(--text); }
+  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 1rem 0; }
+  .code-header { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .code-header span { font-size: 0.7rem; color: var(--muted); font-family: var(--mono); }
+  .code-dots { display: flex; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
+  .code-body { padding: 1.25rem 1.5rem; font-family: var(--mono); font-size: 0.85rem; line-height: 2; overflow-x: auto; white-space: pre; }
+  .c { color: #555566; } .kw { color: #b39ddb; font-weight: 600; } .str { color: var(--accent2); } .fn { color: var(--yellow); } .num { color: #ff8a80; } .prop { color: #80cbc4; }
+  .callout { border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: 0.9rem; line-height: 1.65; display: flex; gap: 12px; align-items: flex-start; }
+  .callout-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; } .callout-body { flex: 1; } .callout-body strong { display: block; margin-bottom: 3px; }
+  .tip-box { background: rgba(124,111,247,0.1); border: 1px solid rgba(124,111,247,0.25); color: #c0b8ff; }
+  .warn-box { background: rgba(255,217,61,0.08); border: 1px solid rgba(255,217,61,0.2); color: #ffe082; }
+  .ok-box { background: rgba(107,203,119,0.08); border: 1px solid rgba(107,203,119,0.2); color: #a5d6a7; }
+  .err-box { background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.2); color: #ef9a9a; }
+  .activity { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; margin: 2.5rem 0; }
+  .activity-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+  .activity h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .activity p { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.25rem; line-height: 1.6; }
+  .opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+  .opt-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; color: var(--text); font-family: var(--sans); font-size: 0.9rem; text-align: left; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 10px; }
+  .opt-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .opt-btn:disabled { cursor: default; opacity: 0.7; }
+  .opt-btn.correct { background: rgba(107,203,119,0.12); border-color: var(--green); color: var(--green); }
+  .opt-btn.wrong { background: rgba(255,107,107,0.1); border-color: var(--accent3); color: var(--accent3); }
+  .opt-letter { width: 24px; height: 24px; border-radius: 6px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; font-family: var(--mono); }
+  .opt-btn.correct .opt-letter { background: var(--green); color: #000; }
+  .opt-btn.wrong .opt-letter { background: var(--accent3); color: #fff; }
+  .quiz-result { font-size: 0.9rem; padding: 10px 14px; border-radius: 8px; margin-top: 0.5rem; display: none; font-weight: 500; }
+  .quiz-result.show { display: block; }
+  .quiz-result.pass { background: rgba(107,203,119,0.12); color: var(--green); border: 1px solid rgba(107,203,119,0.25); }
+  .quiz-result.fail { background: rgba(255,107,107,0.1); color: var(--accent3); border: 1px solid rgba(255,107,107,0.2); }
+  .blank-input { background: var(--surface2); border: 1px solid var(--accent); border-radius: 6px; padding: 6px 10px; color: var(--text); font-family: var(--mono); font-size: 0.9rem; outline: none; }
+  .blank-input.correct { border-color: var(--green); background: rgba(107,203,119,0.1); color: var(--green); }
+  .blank-input.wrong { border-color: var(--accent3); background: rgba(255,107,107,0.08); color: var(--accent3); }
+  .check-btn { background: var(--accent); color: #fff; font-family: var(--sans); font-weight: 600; font-size: 0.85rem; padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.15s; }
+  .check-btn:hover { background: #6a5ee0; }
+  .page-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+  .nav-btn { display: inline-flex; align-items: center; gap: 6px; font-family: var(--sans); font-weight: 500; font-size: 0.9rem; padding: 10px 20px; border-radius: 8px; text-decoration: none; transition: all 0.15s; border: 1px solid var(--border); color: var(--muted); background: transparent; cursor: pointer; }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn.next { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .nav-btn.next:hover { background: #6a5ee0; }
+  .progress-bar { display: flex; gap: 4px; }
+  .prog { width: 28px; height: 4px; border-radius: 2px; background: var(--border); }
+  .prog.done { background: var(--accent); }
+  footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 4rem; }
+  @media (max-width: 600px) { .nav-links { display: none; } .page-nav { flex-direction: column; gap: 1rem; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Luau<span>101</span></a>
+  <div class="nav-links"><a href="index.html">Home</a><a href="01-intro.html">Chapters</a></div>
+</nav>
+
+<div class="page">
+  <span class="chapter-tag">Chapter 03 · Beginner</span>
+  <h1 class="page-title">If / Else 🤔</h1>
+  <p class="page-intro">Your code can make <strong>decisions</strong>. "If the player's health is above 0, they're alive. Otherwise, they're dead." That kind of logic is what makes games feel alive — and it all starts with <strong>if / else</strong>.</p>
+
+  <div class="learn-section">
+    <h2><span class="icon">🔀</span> Basic if / else</h2>
+    <p>The structure is: <strong>if</strong> something is true <strong>then</strong> do this, <strong>else</strong> do something else, <strong>end</strong>.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>ifelse.lua</span></div>
+      <div class="code-body">
+        <div><span class="kw">local</span> health = <span class="num">50</span></div>
+        <div>&nbsp;</div>
+        <div><span class="kw">if</span> health > <span class="num">0</span> <span class="kw">then</span></div>
+        <div>    <span class="fn">print</span>(<span class="str">"You are alive!"</span>)</div>
+        <div><span class="kw">else</span></div>
+        <div>    <span class="fn">print</span>(<span class="str">"You are dead!"</span>)</div>
+        <div><span class="kw">end</span></div>
+      </div>
+    </div>
+    <div class="callout warn-box">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-body"><strong>Don't forget end!</strong> Every if-statement must be closed with <code>end</code>. Forgetting it is the #1 beginner mistake in Luau.</div>
+    </div>
+  </div>
+
+  <div class="learn-section">
+    <h2><span class="icon">🔣</span> Comparison operators</h2>
+    <p>These symbols go inside your <code>if</code> condition to compare things:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:1rem 0;">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:var(--mono);font-size:0.85rem;"><span style="color:var(--yellow);">==</span> <span style="color:var(--muted);font-family:var(--sans);font-size:0.8rem;">is equal to</span></div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:var(--mono);font-size:0.85rem;"><span style="color:var(--yellow);">~=</span> <span style="color:var(--muted);font-family:var(--sans);font-size:0.8rem;">is NOT equal to</span></div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:var(--mono);font-size:0.85rem;"><span style="color:var(--yellow);">&gt;</span> <span style="color:var(--muted);font-family:var(--sans);font-size:0.8rem;">greater than</span></div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:var(--mono);font-size:0.85rem;"><span style="color:var(--yellow);">&lt;</span> <span style="color:var(--muted);font-family:var(--sans);font-size:0.8rem;">less than</span></div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:var(--mono);font-size:0.85rem;"><span style="color:var(--yellow);">&gt;=</span> <span style="color:var(--muted);font-family:var(--sans);font-size:0.8rem;">greater than or equal</span></div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:var(--mono);font-size:0.85rem;"><span style="color:var(--yellow);">&lt;=</span> <span style="color:var(--muted);font-family:var(--sans);font-size:0.8rem;">less than or equal</span></div>
+    </div>
+    <div class="callout err-box">
+      <span class="callout-icon">🚫</span>
+      <div class="callout-body"><strong>= vs ==</strong> — Single <code>=</code> sets a value. Double <code>==</code> checks if two things are equal. Using the wrong one will either crash or give weird results!</div>
+    </div>
+  </div>
+
+  <div class="learn-section">
+    <h2><span class="icon">⛓️</span> elseif — multiple conditions</h2>
+    <p>You can check several conditions in a chain using <strong>elseif</strong>:</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>elseif.lua</span></div>
+      <div class="code-body">
+        <div><span class="kw">local</span> health = <span class="num">30</span></div>
+        <div>&nbsp;</div>
+        <div><span class="kw">if</span> health > <span class="num">75</span> <span class="kw">then</span></div>
+        <div>    <span class="fn">print</span>(<span class="str">"Healthy!"</span>)</div>
+        <div><span class="kw">elseif</span> health > <span class="num">25</span> <span class="kw">then</span></div>
+        <div>    <span class="fn">print</span>(<span class="str">"Low health!"</span>)  <span class="c">-- ← this runs</span></div>
+        <div><span class="kw">else</span></div>
+        <div>    <span class="fn">print</span>(<span class="str">"Critical! Run!"</span>)</div>
+        <div><span class="kw">end</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="learn-section">
+    <h2><span class="icon">🔗</span> and / or — combining conditions</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>andor.lua</span></div>
+      <div class="code-body">
+        <div><span class="kw">local</span> health = <span class="num">50</span></div>
+        <div><span class="kw">local</span> hasShield = <span class="kw">true</span></div>
+        <div>&nbsp;</div>
+        <div><span class="c">-- both must be true</span></div>
+        <div><span class="kw">if</span> health > <span class="num">0</span> <span class="kw">and</span> hasShield <span class="kw">then</span></div>
+        <div>    <span class="fn">print</span>(<span class="str">"Alive with shield!"</span>)</div>
+        <div><span class="kw">end</span></div>
+        <div>&nbsp;</div>
+        <div><span class="c">-- at least one must be true</span></div>
+        <div><span class="kw">if</span> health > <span class="num">100</span> <span class="kw">or</span> hasShield <span class="kw">then</span></div>
+        <div>    <span class="fn">print</span>(<span class="str">"Safe for now!"</span>)</div>
+        <div><span class="kw">end</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 1 -->
+  <div class="activity">
+    <div class="activity-label">🎯 Quick Check</div>
+    <h3>What does ~= mean?</h3>
+    <div class="opts" id="q1-opts">
+      <button class="opt-btn" onclick="answer('q1',this,false)"><span class="opt-letter">A</span> Equal to</button>
+      <button class="opt-btn" onclick="answer('q1',this,false)"><span class="opt-letter">B</span> Greater than</button>
+      <button class="opt-btn" onclick="answer('q1',this,true)"><span class="opt-letter">C</span> Not equal to</button>
+      <button class="opt-btn" onclick="answer('q1',this,false)"><span class="opt-letter">D</span> Less than or equal</button>
+    </div>
+    <div class="quiz-result" id="q1-result"></div>
+  </div>
+
+  <!-- ACTIVITY 2: Trace the code -->
+  <div class="activity">
+    <div class="activity-label">🔍 Trace the code</div>
+    <h3>What gets printed?</h3>
+    <p>Given <code>local score = 85</code>, which message prints?</p>
+    <div class="code-block" style="margin-bottom:1rem;">
+      <div class="code-body">
+        <div><span class="kw">if</span> score >= <span class="num">90</span> <span class="kw">then</span></div>
+        <div>    <span class="fn">print</span>(<span class="str">"A grade"</span>)</div>
+        <div><span class="kw">elseif</span> score >= <span class="num">80</span> <span class="kw">then</span></div>
+        <div>    <span class="fn">print</span>(<span class="str">"B grade"</span>)</div>
+        <div><span class="kw">elseif</span> score >= <span class="num">70</span> <span class="kw">then</span></div>
+        <div>    <span class="fn">print</span>(<span class="str">"C grade"</span>)</div>
+        <div><span class="kw">else</span></div>
+        <div>    <span class="fn">print</span>(<span class="str">"Study more!"</span>)</div>
+        <div><span class="kw">end</span></div>
+      </div>
+    </div>
+    <div class="opts" id="q2-opts">
+      <button class="opt-btn" onclick="answer('q2',this,false)"><span class="opt-letter">A</span> A grade</button>
+      <button class="opt-btn" onclick="answer('q2',this,true)"><span class="opt-letter">B</span> B grade</button>
+      <button class="opt-btn" onclick="answer('q2',this,false)"><span class="opt-letter">C</span> C grade</button>
+      <button class="opt-btn" onclick="answer('q2',this,false)"><span class="opt-letter">D</span> Study more!</button>
+    </div>
+    <div class="quiz-result" id="q2-result"></div>
+  </div>
+
+  <!-- ACTIVITY 3: Write your own -->
+  <div class="activity">
+    <div class="activity-label">🏗️ Build it</div>
+    <h3>Fix the broken code</h3>
+    <p>This code has <strong>2 mistakes</strong>. Can you find them? Type the fixed line(s) below:</p>
+    <div class="code-block" style="margin-bottom:1rem;">
+      <div class="code-body">
+        <div><span class="kw">local</span> coins = <span class="num">50</span></div>
+        <div><span class="kw">if</span> coins = <span class="num">100</span> <span class="kw">then</span></div>
+        <div>    <span class="fn">print</span>(<span class="str">"You're rich!"</span>)</div>
+        <div><span class="c">-- missing something here</span></div>
+      </div>
+    </div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:10px;">Hint: check the condition operator AND what's missing at the end</p>
+    <div class="opts" id="q3-opts">
+      <button class="opt-btn" onclick="answer('q3',this,false)"><span class="opt-letter">A</span> Change <code>= 100</code> to <code>&gt; 100</code>, add <code>else</code></button>
+      <button class="opt-btn" onclick="answer('q3',this,true)"><span class="opt-letter">B</span> Change <code>= 100</code> to <code>== 100</code>, add <code>end</code></button>
+      <button class="opt-btn" onclick="answer('q3',this,false)"><span class="opt-letter">C</span> Delete the if statement entirely</button>
+      <button class="opt-btn" onclick="answer('q3',this,false)"><span class="opt-letter">D</span> Add <code>return</code> at the end</button>
+    </div>
+    <div class="quiz-result" id="q3-result"></div>
+  </div>
+
+  <div class="page-nav">
+    <a href="02-variables.html" class="nav-btn">← Chapter 2</a>
+    <div class="progress-bar">
+      <div class="prog done"></div><div class="prog done"></div><div class="prog done"></div><div class="prog"></div>
+      <div class="prog"></div><div class="prog"></div><div class="prog"></div><div class="prog"></div>
+    </div>
+    <a href="04-loops.html" class="nav-btn next">Next: Loops →</a>
+  </div>
+</div>
+
+<script>
+const answers = { q1: '✅ Correct! ~= means "not equal to". So if name ~= "Bob" means "if the name is NOT Bob".', q2: '✅ Right! 85 is >= 80 but not >= 90, so "B grade" prints.', q3: '✅ Exactly! = is for setting values, == is for comparing. And every if needs an end.' };
+const wrongs = { q1: '❌ Nope! ~= means "not equal to" in Luau.', q2: '❌ Not quite. 85 is greater than or equal to 80, so it hits the elseif >= 80 first.', q3: '❌ Close but not right. The two bugs are: = should be == (comparison not assignment), and end is missing at the bottom.' };
+
+function answer(id, btn, correct) {
+  const opts = document.getElementById(id+'-opts');
+  const res = document.getElementById(id+'-result');
+  opts.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) opts.querySelectorAll('.opt-btn').forEach(b => { if (b.getAttribute('onclick').includes('true')) b.classList.add('correct'); });
+  res.textContent = correct ? answers[id] : wrongs[id];
+  res.className = 'quiz-result show ' + (correct ? 'pass' : 'fail');
+}
+</script>
+<footer>Made with ❤️ for Zack · Luau101 · Happy scripting!</footer>
+</body>
+</html>
